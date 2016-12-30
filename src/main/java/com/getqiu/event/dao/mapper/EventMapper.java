@@ -1,4 +1,6 @@
-package com.getqiu.event.pipeline;
+package com.getqiu.event.dao.mapper;
+
+import com.getqiu.event.dao.po.Event;
 
 public interface EventMapper {
 

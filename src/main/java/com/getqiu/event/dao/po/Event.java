@@ -1,4 +1,6 @@
-package com.getqiu.event.pipeline;
+package com.getqiu.event.dao.po;
+
+import com.getqiu.event.utils.HashTools;
 
 public class Event {
 	private Long id;

@@ -1,4 +1,4 @@
-package com.getqiu.event.pipeline;
+package com.getqiu.event.dao;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,7 +14,7 @@ public class SessionFactoryUtil {
 	//必须设置为 volatile 不然会发生双重检查锁定BUG
 	private volatile static SqlSessionFactory sqlSessionFactory = null;
 	
-	private static String mybatisConfigureFileName = "com/getqiu/event/pipeline/mybatis-config.xml";
+	private static String mybatisConfigureFileName = "com/getqiu/event/dao/mybatis-config.xml";
 	
 	private SessionFactoryUtil(){}
 	

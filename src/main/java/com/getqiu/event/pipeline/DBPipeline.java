@@ -5,6 +5,13 @@ import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
 
+import com.getqiu.event.dao.SessionFactoryUtil;
+import com.getqiu.event.dao.mapper.EventMapper;
+import com.getqiu.event.dao.mapper.EventTagMapper;
+import com.getqiu.event.dao.mapper.TagMapper;
+import com.getqiu.event.dao.po.Event;
+import com.getqiu.event.dao.po.EventTag;
+import com.getqiu.event.dao.po.Tag;
 import com.getqiu.event.utils.CharactorSegmentor;
 
 import us.codecraft.webmagic.ResultItems;

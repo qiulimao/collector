@@ -1,4 +1,4 @@
-package com.getqiu.event.pipeline;
+package com.getqiu.event.utils;
 
 import java.security.MessageDigest;
 

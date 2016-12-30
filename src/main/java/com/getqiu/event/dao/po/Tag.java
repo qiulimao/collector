@@ -1,4 +1,4 @@
-package com.getqiu.event.pipeline;
+package com.getqiu.event.dao.po;
 
 public class Tag {
 	private Long id;

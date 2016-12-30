@@ -3,14 +3,14 @@
     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.getqiu.event.pipeline.EventTagMapper">
-	<resultMap type="com.getqiu.event.pipeline.EventTag" id="eventTagResultMap">
+<mapper namespace="com.getqiu.event.dao.mapper.EventTagMapper">
+	<resultMap type="com.getqiu.event.dao.po.EventTag" id="eventTagResultMap">
 		<id property="id" column="id"></id>
 		<result property="eventId" column="event_id"/>
 		<result property="tagId" column="tag_id"/>
 	</resultMap>
 
-	<insert id="connect" parameterType="com.getqiu.event.pipeline.EventTag" useGeneratedKeys="true" keyProperty="id">
+	<insert id="connect" parameterType="com.getqiu.event.dao.po.EventTag" useGeneratedKeys="true" keyProperty="id">
 	 insert into event_tag(id,event_id,tag_id) values(#{id},#{eventId},#{tagId})
 	</insert>
 

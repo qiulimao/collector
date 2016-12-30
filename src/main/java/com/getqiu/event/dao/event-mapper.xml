@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.getqiu.event.pipeline.EventMapper">
-	<resultMap type="com.getqiu.event.pipeline.Event" id="eventResultMap">
+<mapper namespace="com.getqiu.event.dao.mapper.EventMapper">
+	<resultMap type="com.getqiu.event.dao.po.Event" id="eventResultMap">
 		<id property="id" column="id"></id>
 		<result property="title" column="title"/>
 		<result property="time" column="time"/>
@@ -15,11 +15,11 @@
 		<result property="origin" column="origin"/>
 		<result property="hash" column="hash"/>
 		<!-- 这个collection的意思是：我把我的ID传给你，然后通过select这个方式去找到对应所属的东西 	
-		<collection property="tags" column="id" select="com.getqiu.event.pipeline.TagMapper.getByEventId"/>
+		<collection property="tags" column="id" select="com.getqiu.event.dao.mapper.TagMapper.getByEventId"/>
 		-->
 	</resultMap>
 
-	<insert id="insertEvent" parameterType="com.getqiu.event.pipeline.Event" useGeneratedKeys="true" keyProperty="id">
+	<insert id="insertEvent" parameterType="com.getqiu.event.dao.po.Event" useGeneratedKeys="true" keyProperty="id">
 	 insert into event(id,title,time,publisher,rank,url,cover,content,category,origin,hash) 
 	 		     values(#{id},#{title},#{time},#{publisher},#{rank},#{url},#{cover},#{content},#{category},#{origin},#{hash})
 	</insert>
