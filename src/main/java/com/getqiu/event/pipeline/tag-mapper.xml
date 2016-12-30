@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.getqiu.event.pipeline.TagMapper">
+	<resultMap type="com.getqiu.event.pipeline.Tag" id="tagResultMap">
+		<id property="id" column="id"></id>
+		<result property="label" column="label"/>
+		<!-- 这个collection的意思是：我把我的ID传给你，然后通过select这个方式去找到对应所属的东西 
+		<collection property="events" column="label" select="com.getqiu.event.pipeline.EventMapper.getByTagLabel"/>
+		-->	
+	</resultMap>
+
+	<select id="getById" parameterType="long" resultMap="tagResultMap">
+		select id,label from tag where id = #{id}
+	</select>
+	
+	<insert id="insertTag" parameterType="com.getqiu.event.pipeline.Tag" useGeneratedKeys="true" keyProperty="id">
+	 insert into tag(id,label) values(#{id},#{label})
+	</insert>
+
+	<select id="tagExists" parameterType="string" resultType="long">
+		select id from tag where tag.label=#{label}
+	</select>
+	
+	<select id="getByLabel" parameterType="String" resultMap="tagResultMap">
+		select id,label from tag where tag.label=#{label}
+	</select>
+	
+	
+</mapper>
