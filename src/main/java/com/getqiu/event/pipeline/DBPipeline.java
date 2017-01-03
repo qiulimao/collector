@@ -1,17 +1,16 @@
 package com.getqiu.event.pipeline;
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.annotation.Resource;
 
-import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.getqiu.event.dao.mapper.EventMapper;
-import com.getqiu.event.dao.mapper.EventTagMapper;
-import com.getqiu.event.dao.mapper.TagMapper;
+import com.getqiu.event.dao.EventDAO;
+import com.getqiu.event.dao.EventTagDAO;
+import com.getqiu.event.dao.TagDAO;
 import com.getqiu.event.dao.po.Event;
 import com.getqiu.event.dao.po.EventTag;
 import com.getqiu.event.dao.po.Tag;
@@ -27,16 +26,17 @@ public class DBPipeline implements Pipeline{
 	private Logger logger = Logger.getLogger("collector.pipeline");
 	
 	@Resource
-	private EventMapper eventMapper;
+	private EventDAO eventDAO;
 	
 	@Resource
-	private TagMapper tagMapper;
+	private TagDAO tagDAO;
 	
 	@Resource
-	private EventTagMapper eventTagMapper;
+	private EventTagDAO eventTagDAO;
+	
+	private Lock lock = new ReentrantLock();
 	
 	@Override
-	@Transactional(propagation=Propagation.REQUIRED)
 	public void process(ResultItems resultItems, Task task) {
 
 		Event event= new Event();
@@ -50,11 +50,11 @@ public class DBPipeline implements Pipeline{
 		event.setRank(resultItems.get("rank"));
 		event.setPublisher(resultItems.get("publisher").toString());
 		
-		Long existsId = eventMapper.eventExists(event.getHash());
+		Long existsId = eventDAO.eventExists(event.getHash());
 
 		if(existsId == null)
 		{
-			eventMapper.insertEvent(event);
+			eventDAO.insertEvent(event);
 			/*--------要开始分词处理title---------*/
 			createTagIndex(event);
 			logger.info("++++ ["+event.getTitle()+"] is added to the database.");
@@ -62,8 +62,6 @@ public class DBPipeline implements Pipeline{
 		else{
 			logger.info("||||| ["+existsId+" "+event.getTitle()+"] has already been saved.");
 		}
-
-		
 	}
 
 	/**
@@ -74,23 +72,31 @@ public class DBPipeline implements Pipeline{
 		Set<String> tags = CharactorSegmentor.seperate(title);
 
 		for(String t:tags){
-			Tag tag = tagMapper.getByLabel(t);
+			Tag tag = tagDAO.getByLabel(t);
+			/**
+			 *创建tag的时候应该去加锁，保证不会重复插入tag
+			 *因为在某一时刻，可能n个线程检测到tag数据库都是null，所以同时插入。
+			 *数据库因为unique_constraint 就会报错
+			 * */
 			if (tag == null)
 			{
-				try{
-					tag = new Tag();
-					tag.setLabel(t);
-					tagMapper.insertTag(tag);				
-				}catch (PersistenceException e) {
-					// 有些时候，unqiue error。
-					//虽然查到当前没有这个tag，那是因为多个现成发生了竞争。某个线程查的时候，还没有这个tag
-					//但是等它插入的时候，这个时候另外一个现成已经完成tag的写入
-					System.out.println("the duplicate tag is: "+t);
-					tag = tagMapper.getByLabel(t);
-				}
+				lock.lock();
 
+				try{
+					tag = tagDAO.getByLabel(t);
+					/**
+					 * 双重检查，很有可能是自己被同步锁阻塞了，回过头来，其实别人已经插入了。
+					 * */
+					if(tag == null){
+						tag = new Tag();
+						tag.setLabel(t);
+						tagDAO.insertTag(tag);								
+					}
+				}
+				finally {
+					lock.unlock();
+				}
 			}
-			
 			connectTagWithEvent(event, tag);
 		}
 	}
@@ -100,15 +106,9 @@ public class DBPipeline implements Pipeline{
 	 * */
 	private void connectTagWithEvent(Event e,Tag t){
 		EventTag relation = new EventTag();
-		
 		relation.setEventId(e.getId());
 		relation.setTagId(t.getId());
-		
-		if(eventTagMapper.relationExist(relation.getEventId(), relation.getTagId()) == null){
-			//这里就有点纳闷了，因为新闻是唯一的，tag也是唯一的。怎么样的情况会出现重复关联呢？
-			eventTagMapper.connect(relation);
-		}
-		
+		eventTagDAO.connect(relation);
 	}
 	
 }

@@ -2,3 +2,4 @@
 采用的现成开源产品：
 *   webmagic
 *   mybatis
+*   spring

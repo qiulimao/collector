@@ -87,21 +87,8 @@ public class QQEvents  extends BaseSpider{
 		
 		page.putField("time", eventMeta.getDate());
 		page.putField("origin", eventMeta.getSite());
-		/**
-		 * 这个正文抽取部分直接去除了p标签，根据换行，把这个标签添加回去
-		 * */
-		String content = page.getHtml().smartContent().toString();
 		
-		if(content == null || content.equals("")){
-			page.setSkip(true);
-		}		
-		content = content.replaceAll("^", "<p>");
-		content = content.replaceAll("$", "</p>");
-		content = content.replaceAll("\n", "</p><p>");
-		page.putField("content", content);
-
-		
-
+		page.putField("content", smartContent(page));
 	}
 	
 	/**
@@ -190,5 +177,37 @@ public class QQEvents  extends BaseSpider{
 			return covers.get(0);
 		}
 		
+	}
+	
+	/**
+	 * 最好是保留标签
+	 * */
+	public String smartContent(Page page){
+		String content;
+		StringBuffer sBuffer = new StringBuffer();
+		//content = page.getHtml().xpath("//div[@id='Cnt-Main-Article-QQ']/p[not('style')]").toString();
+		List<String> pContent = page.getHtml().$("#Cnt-Main-Article-QQ > p").all();
+		for(String p:pContent){
+			sBuffer.append(p);
+		}
+		content = sBuffer.toString();
+		if(content == null || content.equals("")){
+			/**
+			 * 这个正文抽取部分直接去除了p标签，根据换行，把这个标签添加回去
+			 * */			
+			content = page.getHtml().smartContent().toString();
+			
+			//将两个以上的空格替换成一个。
+			content = content.replaceAll("\\s{2,}", " ");
+			if(content == null || content.equals("") || content.equals(" ")){
+				page.setSkip(true);
+			}		
+			content = content.replaceAll("^", "<p>");
+			content = content.replaceAll("$", "</p>");
+			content = content.replaceAll("\n", "</p><p>");
+			return content;			
+		}else{
+			return content;
+		}
 	}
 }
