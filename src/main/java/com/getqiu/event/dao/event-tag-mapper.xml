@@ -13,6 +13,10 @@
 	<insert id="connect" parameterType="com.getqiu.event.dao.po.EventTag" useGeneratedKeys="true" keyProperty="id">
 	 insert into event_tag(id,event_id,tag_id) values(#{id},#{eventId},#{tagId})
 	</insert>
+	
+	<select id="relationExist" resultType="long">
+		select id from event_tag where event_id=#{eventId} AND tag_id=#{tagId}
+	</select>
 
 
 

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<context:annotation-config/>
+    <context:component-scan base-package="com.getqiu.event.collector,com.getqiu.event.pipeline"/>
+    
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+	    <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+	    <property name="url" value="jdbc:mysql://localhost:3306/history?useSSL=false&amp;useUnicode=true&amp;characterEncoding=utf-8" />
+	    <property name="username" value="qiulimao"/>
+	    <property name="password" value="mimashiroot"/>
+	</bean>
+	
+	
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+	    <property name="dataSource" ref="dataSource"/>
+	    <property name="configLocation" value="classpath:com/getqiu/event/dao/mybatis-config.xml"/>
+	</bean>
+	
+
+	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+	    <constructor-arg index="0" ref="sqlSessionFactory"/>
+	</bean>
+
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.getqiu.event.dao.mapper"></property>
+		<property name="sqlSessionTemplateBeanName" value="sqlSessionTemplate"></property>
+		<property name="annotationClass" value="org.springframework.stereotype.Repository"></property>
+	</bean>
+	
+
+	<bean id="app" class="com.getqiu.event.collector.App">
+		<property name="startsUrls">
+			<list>
+				<value>http://news.qq.com</value>
+				<value>http://mil.qq.com/mil_index.htm</value>
+				<value>http://sports.qq.com/</value>
+				<value>http://ent.qq.com/</value>
+				<value>http://finance.qq.com/</value>
+				<value>http://stock.qq.com/</value>
+				<value>http://auto.qq.com/</value>
+				<value>http://tech.qq.com/</value>
+				<value>http://digi.tech.qq.com/</value>
+				<value>http://cd.house.qq.com/</value>
+				<value>http://bj.house.qq.com/</value>
+				<value>http://edu.qq.com/</value>
+				<value>http://news.qq.com/world_index.shtml</value>
+				<value>http://news.qq.com/society_index.shtml</value>
+			</list>
+		</property>
+		<property name="workerNum" value="10"></property>
+		<!-- 其余属性让spring自己去注入 -->
+	</bean>
+
+      <!--事务管理器 -->  
+      <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">  
+              <property name="dataSource" ref="dataSource" />  
+      </bean> 
+      <!-- 使用全注释事务 -->  
+      <tx:annotation-driven transaction-manager="transactionManager" /> 
+        
+</beans>
