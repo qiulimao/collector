@@ -47,8 +47,11 @@ public class Event {
 	public void setPublisher(String publisher) {
 		this.publisher = publisher;
 	}
+	/**
+	 * 翻转排名
+	 * */
 	public Integer getRank() {
-		return rank;
+		return 1000 - rank;
 	}
 	public void setRank(Integer rank) {
 		this.rank = rank;
