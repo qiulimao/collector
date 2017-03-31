@@ -4,10 +4,12 @@
   "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
 	<properties >
+	<!-- 
 	  <property name="driver" value="com.mysql.jdbc.Driver"/>
 	  <property name="username" value="qiulimao"/>
 	  <property name="password" value="mimashiroot"/>
-	  <property name="url" value="jdbc:mysql://localhost:3306/history?useSSL=false&amp;useUnicode=true&amp;characterEncoding=utf-8"/>
+	  <property name="url" value="jdbc:mysql://localhost:3306/news?useSSL=false&amp;useUnicode=true&amp;characterEncoding=utf-8"/>
+	 -->
 	</properties>
 	<settings>
 		<setting name="lazyLoadingEnabled" value="true"></setting>

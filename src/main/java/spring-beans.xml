@@ -14,12 +14,13 @@
 
 	<context:annotation-config/>
     <context:component-scan base-package="com.getqiu.event.collector,com.getqiu.event.pipeline,com.getqiu.event.dao"/>
-    
+    <context:property-placeholder location="classpath:db.properties" /> 
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-	    <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
-	    <property name="url" value="jdbc:mysql://localhost:3306/history?useSSL=false&amp;useUnicode=true&amp;characterEncoding=utf-8" />
-	    <property name="username" value="qiulimao"/>
-	    <property name="password" value="mimashiroot"/>
+	    <property name="driverClassName" value="${driver}"/>
+	    <!-- 要记住，如果url写在xml文件当中，那么&符号需要转义，但是已经卸载properties文件当中了，那就不要 -->
+	    <property name="url" value="${url}" />
+	    <property name="username" value="${username}"/>
+	    <property name="password" value="${password}"/>
 	</bean>
 	
 	
@@ -59,7 +60,7 @@
 				<value>http://news.qq.com/society_index.shtml</value>
 			</list>
 		</property>
-		<property name="workerNum" value="10"></property>
+		<property name="workerNum" value="8"></property>
 		<!-- 其余属性让spring自己去注入 -->
 	</bean>
 
