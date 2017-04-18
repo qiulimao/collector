@@ -40,7 +40,15 @@
 		<property name="annotationClass" value="org.springframework.stereotype.Repository"></property>
 	</bean>
 	
-
+	<bean id="wordService" class="com.getqiu.event.utils.WordService">
+		<property name="scheme" value="http"></property>
+		<property name="host" value="localhost"></property>
+		<property name="port" value="8000"></property>
+		<property name="seperatingPath" value="/services/word/separating"></property>
+		<property name="labelingPath" value="/services/word/labeling"></property>
+		<property name="analyzingPath" value="/services/word/analyzing"></property>
+	</bean>
+	
 	<bean id="app" class="com.getqiu.event.collector.App">
 		<property name="startsUrls">
 			<list>
@@ -60,7 +68,7 @@
 				<value>http://news.qq.com/society_index.shtml</value>
 			</list>
 		</property>
-		<property name="workerNum" value="8"></property>
+		<property name="workerNum" value="4"></property>
 		<!-- 其余属性让spring自己去注入 -->
 	</bean>
 

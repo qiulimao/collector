@@ -1,5 +1,5 @@
 package com.getqiu.event.pipeline;
-import java.util.Set;
+import java.util.Collection;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -14,7 +14,7 @@ import com.getqiu.event.dao.TagDAO;
 import com.getqiu.event.dao.po.Event;
 import com.getqiu.event.dao.po.EventTag;
 import com.getqiu.event.dao.po.Tag;
-import com.getqiu.event.utils.CharactorSegmentor;
+import com.getqiu.event.utils.WordService;
 
 import us.codecraft.webmagic.ResultItems;
 import us.codecraft.webmagic.Task;
@@ -33,6 +33,9 @@ public class DBPipeline implements Pipeline{
 	
 	@Resource
 	private EventTagDAO eventTagDAO;
+	
+	@Resource
+	private WordService wordService;
 	
 	private Lock lock = new ReentrantLock();
 	
@@ -69,7 +72,8 @@ public class DBPipeline implements Pipeline{
 	 * */
 	private void createTagIndex(Event event){
 		String title = event.getTitle();
-		Set<String> tags = CharactorSegmentor.seperate(title);
+		//Collection<String> tags = CharactorSegmentor.seperate(title);
+		Collection<String> tags = wordService.labeling(title);
 
 		for(String t:tags){
 			Tag tag = tagDAO.getByLabel(t);
@@ -102,7 +106,9 @@ public class DBPipeline implements Pipeline{
 	}
 	
 	/**
-	 * 建立event和tag之间的关系
+	 * 建立event和tag之间的关系,
+	 * 如果一个title当中有重复的标签，并且在得到标签时没有去重，
+	 * 那么可能出现unique错误
 	 * */
 	private void connectTagWithEvent(Event e,Tag t){
 		EventTag relation = new EventTag();
