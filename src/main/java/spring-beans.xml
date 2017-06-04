@@ -14,13 +14,20 @@
 
 	<context:annotation-config/>
     <context:component-scan base-package="com.getqiu.event.collector,com.getqiu.event.pipeline,com.getqiu.event.dao"/>
-    <context:property-placeholder location="classpath:db.properties" /> 
+    
+    <context:property-placeholder location="classpath:MysqlDBConfigure.properties" /> 
+    
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-	    <property name="driverClassName" value="${driver}"/>
-	    <!-- 要记住，如果url写在xml文件当中，那么&符号需要转义，但是已经卸载properties文件当中了，那就不要 -->
-	    <property name="url" value="${url}" />
-	    <property name="username" value="${username}"/>
-	    <property name="password" value="${password}"/>
+	    <property name="driverClassName" value="${mysql.driver}"/>
+	    <property name="url" value="${mysql.url}" />
+	    <property name="username" value="${mysql.username}"/>
+	    <property name="password" value="${mysql.password}"/>
+	     <!-- 
+	    <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+	    <property name="url" value="jdbc:mysql://localhost:3306/history?useSSL=false&amp;useUnicode=true&amp;characterEncoding=utf8 " />
+	    <property name="username" value="qiulimao"/>
+	    <property name="password" value="mimashiroot"/>	 
+	     -->    
 	</bean>
 	
 	
@@ -30,7 +37,7 @@
 	</bean>
 	
 
-	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate" scope="prototype">
 	    <constructor-arg index="0" ref="sqlSessionFactory"/>
 	</bean>
 
